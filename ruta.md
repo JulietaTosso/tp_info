@@ -130,6 +130,6 @@ Luego se combina con un sistema configurble de CALIBRACIÓN
 ## General
 ## Arquitectura general
 
-![Esquema propuesto por el profesor](/home/julieta/Escritorio/tp_info/esquema.jpeg)
+![Esquema propuesto por el profesor](esquema.jpeg)
 
 
