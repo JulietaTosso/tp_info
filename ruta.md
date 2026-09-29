@@ -127,7 +127,6 @@ Luego se combina con un sistema configurble de CALIBRACIÓN
 ---
 - Alertas remotas
 
-## General
 ## Arquitectura general
 
 ![Esquema propuesto por el profesor](esquema.jpeg)
