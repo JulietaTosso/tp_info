@@ -128,7 +128,9 @@ Luego se combina con un sistema configurble de CALIBRACIÓN
 - Alertas remotas
 
 ## General
+## Arquitectura general
 
+```text
                  ┌──────────────┐
                                   │     MQ-2     │
                                                    └──────┬───────┘
@@ -169,10 +171,3 @@ Luego se combina con un sistema configurble de CALIBRACIÓN
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         │      ↓       │
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      │     Qt       │
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   └──────────────┘
-
-
-
-
-
-
-
