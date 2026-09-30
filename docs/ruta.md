@@ -96,6 +96,14 @@ Luego se combina con un sistema configurble de CALIBRACIÓN
 
 # Esquemas
 
+## Cuadro de estados
+
+| ESTADO | LED | BUZZER | LCD |
+|--------|-----|--------|-----|
+| NORMAL | VERDE | OFF | VALORES|
+| PREALARMA | AMARILLO | INTERMITENTE | ADVERTENCIA |
+| ALARMA | ROJO | ON | ALARMA | 
+
 ## Qué hará Arduino
 
 - Leer MQ-2
