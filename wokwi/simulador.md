@@ -429,6 +429,7 @@ unsigned long ultimoCambioBuzzer = 0;
 bool buzzerEncendido = false;
 
 const unsigned long INTERVALO_BUZZER = 500;
+const int FRECUENCIA_BUZZER = 1000;
 
 void actualizarAlarmas(){
     switch(estadoActual){
@@ -436,8 +437,8 @@ void actualizarAlarmas(){
             digitalWrite(LED_VERDE, HIGH);
             digitalWrite(LED_AMARILLO, LOW);
             digitalWrite(LED_ROJO, LOW);
-            digitalWrite(BUZZER, LOW);
-
+            
+            noTone(BUZZER);
             buzzerEncendido = false;
             break;
 
@@ -451,18 +452,19 @@ void actualizarAlarmas(){
                 ultimoCambioBuzzer = millis();
             }
             
-            digitalWrite(
-                BUZZER,
-                buzzerEncendido ? HIGH : LOW
-            );
+            if (buzzerEncendido){
+                tone(BUZZER, FRECUENCIA_BUZZER);
+            } else {
+                noTone(BUZZER);
+            }
             break;
 
         case ALARMA:
             digitalWrite(LED_VERDE, LOW);
             digitalWrite(LED_AMARILLO, LOW);
             digitalWrite(LED_ROJO, HIGH);
-            digitalWrite(BUZZER, HIGH);
-
+            
+            tone(BUZZER, FRECUENCIA_BUZZER);
             buzzerEncendido = true;
             break;
 
@@ -490,9 +492,22 @@ void loop() {
 
 ### Testeamos
 
+- [x] NORMAL: LED verde encendido y buzzer apagado
 
-GAS: 0.8ppm
+![Normal](normal.png)
 
-Gas: 391 | Temperatura: 29.19 C | Movimiento: NO DETECTADO | Estado: NORMAL
+- [x] PREALARMA por gas: LED amarillo encendido y buzzer INTERMITENTE
+
+![Prealarma por gas](prealarma.png)
+
+- [x] ALARMA por gas: LED rojo encendido y buzzer continuo
+
+![Alarma por gas](alarma1.png)
+
+- [x] ALARMA por temperatura: LED rojo encendido y buzzer continuo
+
+![Alarma por temperatura](alarma2.png)
+
+
 
 
