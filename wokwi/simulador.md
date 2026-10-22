@@ -206,7 +206,7 @@ const int PIN_PIR = 2;
 
 // Umbrales provisionales de simulación
 const int GAS_PREALARMA = 400;
-const int GAS_ALARMA = 700;
+const int GAS_ALARMA = 930;
 
 const float TEMP_PREALARMA = 40.0;
 const float GAS_ALARMA = 60.0;
@@ -377,6 +377,122 @@ Gas: 342 | Temperatura: 29.19 C | Movimiento: DETECTADO | Estado: NORMAL
 ---
 
 
+## Integramos LEDs y BUZZER
 
+### Agregamos los componentes
+
+- 3 LEDs (verde, amarillo, rojo)
+- 3 resistencias de 220Ω
+- 1 Buzzer piezoeléctrico
+
+### Conectamos
+
+|Componente|Conexión al Arduino|
+|----------|-------------------|
+|LED verde| Pin 8 |
+|LED amarillo| Pin 9 |
+|LED rojo | Pin 10 |
+|Buzzer +| Pin 11|
+|Cátodo de cada LED (pata corta)|GND|
+|Buzzer -|GND|
+
+![LEDs y Buzzer](diseño2.png)
+
+### Agregamos el código
+
+Declarar pines
+
+```c++
+const int LED_VERDE = 8;
+const int LED_AMARILLO = 9;
+const int LED_ROJO = 10;
+const int BUZZER = 11;
+```
+
+---
+
+Configurar pines en `setup()`
+
+```c++
+pinMode(LED_VERDE, OUTPUT);
+pinMode(LED_AMARILLO, OUTPUT);
+pinMode(LED_ROJO, OUTPUT);
+pinMode(BUZZER, OUTPUT);
+```
+
+---
+
+Crear la función `actualizarAlarmas()`
+
+```c++
+unsigned long ultimoCambioBuzzer = 0;
+bool buzzerEncendido = false;
+
+const unsigned long INTERVALO_BUZZER = 500;
+
+void actualizarAlarmas(){
+    switch(estadoActual){
+        case NORMAL:
+            digitalWrite(LED_VERDE, HIGH);
+            digitalWrite(LED_AMARILLO, LOW);
+            digitalWrite(LED_ROJO, LOW);
+            digitalWrite(BUZZER, LOW);
+
+            buzzerEncendido = false;
+            break;
+
+        case PREALARMA:
+            digitalWrite(LED_VERDE, LOW);
+            digitalWrite(LED_AMARILLO, HIGH);
+            digitalWrite(LED_ROJO, LOW);
+
+            if(millis() - ultimoCambioBuzzer >= INTERVALO_BUZZER{
+                buzzerEncendido = !buzzerEncendido;
+                ultimoCambioBuzzer = millis();
+            }
+            
+            digitalWrite(
+                BUZZER,
+                buzzerEncendido ? HIGH : LOW
+            );
+            break;
+
+        case ALARMA:
+            digitalWrite(LED_VERDE, LOW);
+            digitalWrite(LED_AMARILLO, LOW);
+            digitalWrite(LED_ROJO, HIGH);
+            digitalWrite(BUZZER, HIGH);
+
+            buzzerEncendido = true;
+            break;
+
+    }
+
+}
+```
+
+---
+
+Llamar a la funcion desde `loop()`
+
+```c++
+void loop() {
+    leerSensores();
+    determinarEstado();
+    actualizarAlarmas();
+    mostrarDatos();
+
+    delay(1000);
+}
+```
+
+---
+
+### Testeamos
+
+
+GAS: 0.8ppm
+
+Gas: 391 | Temperatura: 29.19 C | Movimiento: NO DETECTADO | Estado: NORMAL
 
 
