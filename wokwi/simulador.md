@@ -374,6 +374,7 @@ Gas: 342 | Temperatura: 29.19 C | Movimiento: DETECTADO | Estado: NORMAL
 
 
 
+
 ---
 
 
@@ -515,5 +516,94 @@ void loop() {
 ![Alarma por temperatura](alarma2.png)
 
 
+
+## Pantalla LCD
+
+### Agregamos y conectamos
+
+- LCD 16x2 con I²C
+
+|PIN del LCD|ARDUINO|
+|-----------|-------|
+|GND|GND|
+|VCC|5V|
+|SDA|A4|
+|SCL|A5|
+
+### Agregamos bibliotecas para usarlas
+
+```
+LiquidCrystal_I2C
+OneWire // Ya esta
+DallasTemperature   // Ya esta
+```
+
+### Probamos que ande la pantalla por separado
+
+```c++
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+void setup() {
+  lcd.init();
+    lcd.backlight();
+
+      lcd.setCursor(0, 0);
+        lcd.print("Sistema ambiental");
+
+          lcd.setCursor(0, 1);
+            lcd.print("LCD funcionando");
+            }
+
+            void loop() {
+            }
+```
+
+![Testeo LCD](testeo_lcd.png)
+
+
+### Funcionamiento
+
+Van a ser 2 pantallas que se alternan cada 2 segundos:
+
+```
+Pantalla 1 — Mediciones
+Temp: 29.19 C
+Gas: 342
+
+
+Pantalla 2 — Estado
+Estado del sistema
+NORMAL
+```
+
+Cuando salte una alarma la pantalla mostrara `PREALARMA`o `ALARMA`
+
+### Testeo
+
+![Normal](normal1.png)
+![](normal2.png)
+
+---
+
+![Prealarma](prealarma1.png)
+![](prealarma2.png)
+
+---
+
+![Alarma por gas](alarmaG1.png)
+![](alarmaG2.png)
+
+---
+
+![Alarma por temperatura](alarmaT1.png)
+![](alarmaT2.png)
+
+---
+
+![Error en la temperatura](error1.png)
+![](error2.png)
 
 
