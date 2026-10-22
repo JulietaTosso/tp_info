@@ -50,7 +50,7 @@ Testeamos sensor por sensor para separar posibles fallas.
 
 #### MQ-2
 
-```
+```c++
 
 const int PIN_GAS = A0;
 
@@ -88,7 +88,7 @@ Este usa digital 1-Wire por lo que hay que agregar algunas librerias aparte.
 - OneWire
 - DallasTemperature
 
-```
+```c++
 
 #include <OneWire.h>
 #include <DallasTemperature.h>
@@ -144,7 +144,7 @@ Que se repita 22.00 °C es normal si la temperatura configurada en el simulador 
 #### PIR 
 
 
-```
+```c++
 
 const int PIN_PIR = 2;
 
@@ -183,88 +183,200 @@ El Arduino está leyendo el pin digital 2 y recibe LOW, que nuestro programa int
 
 El simulador limita para poder testear si el PIR también detecta `HIGH`
 
+
 ---
 
-#### Testeo Integrado
+## Testeo Integrado
 
-Probamos todo junto
+
+Probamos todo junto con un codigo mas compacto
 
 ![diseño en wokwi](diseño.png)
 
 El codigo:
 
-```
-
+```c++
 #include <OneWire.h>
 #include <DallasTemperature.h>
 
-// Pines
+// Pines de los sensores
 const int PIN_GAS = A0;
 const int PIN_TEMP = 4;
 const int PIN_PIR = 2;
 
-// Sensor de temperatura
-OneWire oneWire(PIN_TEMP);
+// Umbrales provisionales de simulación
+const int GAS_PREALARMA = 400;
+const int GAS_ALARMA = 700;
+
+const float TEMP_PREALARMA = 40.0;
+const float GAS_ALARMA = 60.0;
+
+// Comunicación con el DS18B20
+OneWire onreWire(PIN_TEMP);
 DallasTemperature sensorTemp(&oneWire);
 
-void setup() {
-  Serial.begin(9600);
+// Variables de medición
+int valorGas = 0;
+float temperatura = 0.0;
+int movimiento = LOW;
+
+// Estado del sistema
+enum Estado {
+    NORMAL,
+    PREALARMA,
+    ALARMA
+};
+
+Estado estadoActual = NORMAL;
+
+// Declaraciones de funciones
+void leerSensores();
+void determinarEstado();
+void mostrarDatos();
+
+//////////
+
+void setup(){
+    Serial.begin(9600);
 
     pinMode(PIN_PIR, INPUT);
-      sensorTemp.begin();
+    sensorTemp.begin();
 
-        Serial.println("Sistema de monitoreo ambiental");
-          Serial.println("--------------------------------");
-          }
+    Serial.println("Sistema de monitoreo ambiental");
+}
 
-          void loop() {
-            // 1. Leer gas
-              int valorGas = analogRead(PIN_GAS);
+//////////
 
-                // 2. Leer temperatura
-                  sensorTemp.requestTemperatures();
-                    float temperatura = sensorTemp.getTempCByIndex(0);
+void loop(){
+    leerSensores();
+    determinarEstado();
+    mostrarDatos();
 
-                      // 3. Leer movimiento
-                        int movimiento = digitalRead(PIN_PIR);
+    delay(1000);
+}
 
-                          // 4. Mostrar todas las lecturas
-                            Serial.print("Gas: ");
-                              Serial.print(valorGas);
 
-                                Serial.print(" | Temperatura: ");
-                                  Serial.print(temperatura);
-                                    Serial.print(" °C");
+void leerSensores(){
+    // Lee el MQ-2
+    valorGas = analogRead(PIN_GAS);
 
-                                      Serial.print(" | Movimiento: ");
-                                        if (movimiento == HIGH) {
-                                            Serial.println("DETECTADO");
-                                              } else {
-                                                  Serial.println("NO DETECTADO");
-                                                    }
+    // lee el DS18B20
+    sensorTemp.requestTemperatures();
+    temperatura = sensorTemp.getTempCByIndex(0);
 
-                                                      Serial.println("--------------------------------");
+    // lee el PIR
+    movimiento = digitalRead(PIN_PIR):
+}
 
-                                                        delay(1000);
-                                                        }
+
+void determinarEstado() {
+    if(valorGas >= GAS_ALARMA || temperatura >= TEMP_ALARMA){
+        estadoActual = ALARMA;
+    }
+    else if (valorGas >= GAS_PREALARMA || temperatura >= TEMP_PREALARMA){
+        estadoActual = PREALARMA;
+    }
+    else {
+        estadoActual = NORMAL;
+    }
+}
+
+void mostrarDatos(){
+    Serial.print("Gas: ");
+    Serial.print(valorGas);
+
+    Serial.print(" | Temperatura: ");
+    Serial.print(temperatura);
+    Serial.print(" C°");
+
+    Serial.print(" | Movimiento: ");
+    if(movimiento == HIGH){
+        Serial.print("DETECTADO");
+    } else{
+        Serial.print("NO detectado");
+    }
+
+    Serial.printf(" | Estado: "):
+
+    switch (estadoActual){
+        case NORMAL:
+            Serial.println("NORMAL");
+            break;
+
+        case PREALARMA:
+            Serial.println("PREALARMA");
+            break;
+
+        case ALARMA:
+            Serial.println("ALARMA");
+            break;
+    }
+}
+
 ```
 
-Devuelve por termianl:
+Devuelve por terminal:
 
 ```
 Sistema de monitoreo ambiental
---------------------------------
-Gas: 907 | Temperatura: 22.00 °C | Movimiento: NO DETECTADO
---------------------------------
-Gas: 907 | Temperatura: 22.00 °C | Movimiento: NO DETECTADO
---------------------------------
-Gas: 907 | Temperatura: 22.00 °C | Movimiento: NO DETECTADO
---------------------------------
-Gas: 907 | Temperatura: 22.00 °C | Movimiento: NO DETECTADO
---------------------------------
+Gas: 907 | Temperatura: 22.00 C | Movimiento: NO DETECTADO | Estado: ALARMA
+Gas: 907 | Temperatura: 22.00 C | Movimiento: NO DETECTADO | Estado: ALARMA
 ```
 
+
+Alterando los parametros:
+
+```
+Sistema de monitoreo ambiental
+Gas: 907 | Temperatura: 34.81 C | Movimiento: NO DETECTADO | Estado: PREALARMA
+Gas: 907 | Temperatura: 34.81 C | Movimiento: NO DETECTADO | Estado: PREALARMA
+Gas: 907 | Temperatura: 34.81 C | Movimiento: NO DETECTADO | Estado: PREALARMA
+Gas: 907 | Temperatura: 34.81 C | Movimiento: DETECTADO | Estado: PREALARMA
+Gas: 907 | Temperatura: 34.81 C | Movimiento: DETECTADO | Estado: PREALARMA
+Gas: 907 | Temperatura: 34.81 C | Movimiento: DETECTADO | Estado: PREALARMA
+Gas: 907 | Temperatura: 34.81 C | Movimiento: DETECTADO | Estado: PREALARMA
+Gas: 907 | Temperatura: 34.81 C | Movimiento: DETECTADO | Estado: PREALARMA
+Gas: 907 | Temperatura: 34.81 C | Movimiento: NO DETECTADO | Estado: PREALARMA
+Gas: 907 | Temperatura: 34.81 C | Movimiento: NO DETECTADO | Estado: PREALARMA
+Gas: 907 | Temperatura: 34.81 C | Movimiento: NO DETECTADO | Estado: PREALARMA
+Gas: 907 | Temperatura: 34.81 C | Movimiento: NO DETECTADO | Estado: PREALARMA
+Gas: 907 | Temperatura: 34.81 C | Movimiento: NO DETECTADO | Estado: PREALARMA
+Gas: 994 | Temperatura: 34.81 C | Movimiento: NO DETECTADO | Estado: ALARMA
+Gas: 995 | Temperatura: 34.81 C | Movimiento: NO DETECTADO | Estado: ALARMA
+Gas: 995 | Temperatura: 34.81 C | Movimiento: NO DETECTADO | Estado: ALARMA
+Gas: 995 | Temperatura: 34.81 C | Movimiento: NO DETECTADO | Estado: ALARMA
+Gas: 746 | Temperatura: 34.81 C | Movimiento: NO DETECTADO | Estado: PREALARMA
+Gas: 514 | Temperatura: 34.81 C | Movimiento: NO DETECTADO | Estado: PREALARMA
+Gas: 514 | Temperatura: 34.81 C | Movimiento: NO DETECTADO | Estado: PREALARMA
+Gas: 514 | Temperatura: 34.81 C | Movimiento: NO DETECTADO | Estado: PREALARMA
+Gas: 514 | Temperatura: 34.81 C | Movimiento: NO DETECTADO | Estado: PREALARMA
+Gas: 342 | Temperatura: 34.81 C | Movimiento: NO DETECTADO | Estado: NORMAL
+Gas: 342 | Temperatura: 34.81 C | Movimiento: NO DETECTADO | Estado: NORMAL
+Gas: 342 | Temperatura: 34.81 C | Movimiento: NO DETECTADO | Estado: NORMAL
+Gas: 342 | Temperatura: 34.81 C | Movimiento: NO DETECTADO | Estado: NORMAL
+Gas: 342 | Temperatura: 78.69 C | Movimiento: NO DETECTADO | Estado: ALARMA
+Gas: 342 | Temperatura: 78.69 C | Movimiento: NO DETECTADO | Estado: ALARMA
+Gas: 342 | Temperatura: 78.69 C | Movimiento: NO DETECTADO | Estado: ALARMA
+Gas: 342 | Temperatura: 65.31 C | Movimiento: NO DETECTADO | Estado: ALARMA
+Gas: 342 | Temperatura: 59.31 C | Movimiento: NO DETECTADO | Estado: PREALARMA
+Gas: 342 | Temperatura: 59.31 C | Movimiento: NO DETECTADO | Estado: PREALARMA
+Gas: 342 | Temperatura: 59.31 C | Movimiento: NO DETECTADO | Estado: PREALARMA
+Gas: 342 | Temperatura: 38.50 C | Movimiento: NO DETECTADO | Estado: NORMAL
+Gas: 342 | Temperatura: -127.00 C | Movimiento: NO DETECTADO | Estado: NORMAL
+Gas: 342 | Temperatura: 29.19 C | Movimiento: NO DETECTADO | Estado: NORMAL
+Gas: 342 | Temperatura: 29.19 C | Movimiento: NO DETECTADO | Estado: NORMAL
+Gas: 342 | Temperatura: 29.19 C | Movimiento: NO DETECTADO | Estado: NORMAL
+Gas: 342 | Temperatura: 29.19 C | Movimiento: DETECTADO | Estado: NORMAL
+Gas: 342 | Temperatura: 29.19 C | Movimiento: DETECTADO | Estado: NORMAL
+Gas: 342 | Temperatura: 29.19 C | Movimiento: DETECTADO | Estado: NORMAL
+```
+
+
+
+
 ---
+
+
 
 
 
