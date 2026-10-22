@@ -496,13 +496,19 @@ void loop() {
 
 ![Normal](normal.png)
 
+---
+
 - [x] PREALARMA por gas: LED amarillo encendido y buzzer INTERMITENTE
 
 ![Prealarma por gas](prealarma.png)
 
+---
+
 - [x] ALARMA por gas: LED rojo encendido y buzzer continuo
 
 ![Alarma por gas](alarma1.png)
+
+---
 
 - [x] ALARMA por temperatura: LED rojo encendido y buzzer continuo
 
