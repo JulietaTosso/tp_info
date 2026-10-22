@@ -583,25 +583,35 @@ Cuando salte una alarma la pantalla mostrara `PREALARMA`o `ALARMA`
 
 ### Testeo
 
+Normal
+
 ![Normal](normal1.png)
 ![](normal2.png)
 
 ---
+
+Prealarma
 
 ![Prealarma](prealarma1.png)
 ![](prealarma2.png)
 
 ---
 
+Alarma por gas
+
 ![Alarma por gas](alarmaG1.png)
 ![](alarmaG2.png)
 
 ---
 
+Alarma por temperatura
+
 ![Alarma por temperatura](alarmaT1.png)
 ![](alarmaT2.png)
 
 ---
+
+Error en temperatura
 
 ![Error en la temperatura](error1.png)
 ![](error2.png)
