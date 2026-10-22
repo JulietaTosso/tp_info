@@ -2,16 +2,18 @@
 
 ## Ponemos los componentes
 
-- 
-- 
-- 
-- 
+- Arduino UNO R3 
+- Protoboard
+- MQ-2
+- PIR
+- DS18B20 (en el proyecto final usaremos LM35
 
 ## Primeras conexiones
 
 ### Conectamos alimentación
 
 |Arduino | Protoboard|
+|--------|-----------|
 |5v| Carril positivo + |
 |GND| Carril negativo -|
 
@@ -22,10 +24,14 @@
 - VCC y GND a protoboard
 - AOUT a A0 de arduino
 
+---
+
 #### Sensor PIR
 
 - VCC y GND a protoboard
 - OUT a Pin digital 2 de arduino
+
+---
 
 #### Sensor DS18B20
 
@@ -35,6 +41,8 @@
 Si fuese el LM35
 
 - Vout a A1 de arduino
+
+---
 
 ### Testeo
 
@@ -70,6 +78,8 @@ Devuelve por terminal
 ```
 
 Que el monitor serie muestre 907 de forma constante ya nos sirve como comprobación inicial de que el programa está leyendo un valor del pin A0.
+
+---
 
 #### DS18B20
 
@@ -129,6 +139,7 @@ Esto nos indica que el Arduino se está comunicando con el sensor y está recibi
 
 Que se repita 22.00 °C es normal si la temperatura configurada en el simulador no cambia.
 
+---
 
 #### PIR 
 
@@ -172,6 +183,7 @@ El Arduino está leyendo el pin digital 2 y recibe LOW, que nuestro programa int
 
 El simulador limita para poder testear si el PIR también detecta `HIGH`
 
+---
 
 #### Testeo Integrado
 
@@ -251,6 +263,8 @@ Gas: 907 | Temperatura: 22.00 °C | Movimiento: NO DETECTADO
 Gas: 907 | Temperatura: 22.00 °C | Movimiento: NO DETECTADO
 --------------------------------
 ```
+
+---
 
 
 
